@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.Locale;
 
 public class RobotDrive {
-
+    Telemetry telemetry = null;
     static double TURN_P = 0.01;
     static int wheelDiameter = 4;
     private DcMotor leftfront = null;
@@ -38,7 +38,8 @@ public class RobotDrive {
     }
 
 
-    void initializeRobot(HardwareMap hardwareMap) {
+    void initializeRobot(HardwareMap hardwareMap, Telemetry telem) {
+        telemetry = telem;
         RobotDrive.direction strafeDirection;
         leftfront = hardwareMap.dcMotor.get("front_left_motor");
         rightfront = hardwareMap.dcMotor.get("front_right_motor");
@@ -149,7 +150,7 @@ public class RobotDrive {
 
     /*******************************************TURNING********************************************/
     //Handling turning using a gyroscope reading
-    void gyroTurn(double degrees, Telemetry telemetry) throws InterruptedException {
+    void gyroTurn(double degrees) throws InterruptedException {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double target_angle = getHeading() - degrees;
         if (degrees < 0) {target_angle += turningBuffer;} else if (degrees > 0) {target_angle -= turningBuffer;}
@@ -186,12 +187,12 @@ public class RobotDrive {
         return Math.max(min, Math.min(max, val));
     }
 
-    public static float clamp(float val, float min, float max) {
+    public static double clamp(float val, float min, float max) {
         return Math.max(min, Math.min(max, val));
     }
 
 
-    void getEncoderVals(Telemetry telemetry) {
+    void getEncoderVals() {
         telemetry.addData("Encoders", "%d %d %d %d",
                 leftfront.getCurrentPosition(),
                 rightfront.getCurrentPosition(),
@@ -201,7 +202,10 @@ public class RobotDrive {
 
 
     void mixDrive(double forward, double strafe, double rotate) {
-
+        telemetry.addData("Velocities", "%.1f %.1f %.0f",
+                forward,
+                strafe,
+                rotate);
         double frontLeftSpeed = clamp((forward + strafe + rotate), -motorPower, motorPower);
         double frontRightSpeed = clamp((forward - strafe - rotate), -motorPower, motorPower);
         double backLeftSpeed = clamp((forward - strafe + rotate), -motorPower, motorPower);
@@ -211,5 +215,6 @@ public class RobotDrive {
         rightfront.setPower(frontRightSpeed);
         leftrear.setPower(backLeftSpeed);
         rightrear.setPower(backRightSpeed);
+        telemetry.update();
     }
 }
