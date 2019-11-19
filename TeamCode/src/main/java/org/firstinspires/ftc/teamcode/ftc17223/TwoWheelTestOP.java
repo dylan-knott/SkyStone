@@ -7,18 +7,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class TwoWheelTestOP extends LinearOpMode {
     TwoWheelDrive robot = new TwoWheelDrive();;
 
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         robot.initializeRobot(hardwareMap);
 
         //Runs once when start is pressed
         waitForStart();
-        for (int i = 0; i < 4; i++) {
-            robot.driveEncoder(12);
-            robot.gyroTurn(180, telemetry);
-        }
-
-        while (opModeIsActive()){
-           break;
-        }
+        robot.driveTime(2000);
+        robot.gyroTurn(90, telemetry);
+        robot.driveTime(2000);
+        robot.gyroTurn(90, telemetry);
+        robot.driveTime(2000);
+        robot.gyroTurn(90, telemetry);
+        robot.driveTime(2000);
+        robot.gyroTurn(90, telemetry);
     }
 }
