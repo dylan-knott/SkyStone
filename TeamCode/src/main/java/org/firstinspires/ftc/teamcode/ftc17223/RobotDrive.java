@@ -150,7 +150,7 @@ public class RobotDrive {
 
     /*******************************************TURNING********************************************/
     //Handling turning using a gyroscope reading
-    void gyroTurn(double degrees) throws InterruptedException {
+    void gyroTurn(double degrees) {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double target_angle = getHeading() - degrees;
         if (degrees < 0) {target_angle += turningBuffer;} else if (degrees > 0) {target_angle -= turningBuffer;}
@@ -202,10 +202,6 @@ public class RobotDrive {
 
 
     void mixDrive(double forward, double strafe, double rotate) {
-        telemetry.addData("Velocities", "%.1f %.1f %.0f",
-                forward,
-                strafe,
-                rotate);
         double frontLeftSpeed = clamp((forward + strafe + rotate), -motorPower, motorPower);
         double frontRightSpeed = clamp((forward - strafe - rotate), -motorPower, motorPower);
         double backLeftSpeed = clamp((forward - strafe + rotate), -motorPower, motorPower);

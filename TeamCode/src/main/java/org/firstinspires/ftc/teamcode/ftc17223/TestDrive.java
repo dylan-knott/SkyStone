@@ -37,17 +37,16 @@ public class TestDrive extends LinearOpMode {
         vuforiaClass.seekStone();
 
         //Runs in a loop after start
-        /**while (opModeIsActive()) {
+        while (opModeIsActive()) {
 
 
-
-        //robotDrive.driveEncoder(100);
-        //robotDrive.gyroTurn(180);
-        //robotDrive.strafeEncoder( 100, RobotDrive.direction.left);
-        //robotDrive.driveEncoder(100);
+        robotDrive.driveEncoder(100);
+        robotDrive.gyroTurn(180);
+        robotDrive.strafeEncoder( 100, RobotDrive.direction.left);
+        robotDrive.driveEncoder(100);
         robotDrive.strafeEncoder( 100, RobotDrive.direction.right);
         robotDrive.gyroTurn(-90);
-        } **/
+        }
 
     }
 

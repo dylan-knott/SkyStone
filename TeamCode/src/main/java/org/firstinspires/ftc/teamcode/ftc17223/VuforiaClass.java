@@ -18,13 +18,12 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 
-/**
- * @see VuforiaLocalizer
- */
+
 
 public class VuforiaClass {
-    //RobotDrive robotDrive = new RobotDrive();
+    RobotDrive robotDrive = new RobotDrive();
     Telemetry telemetry = null;
+    double P_MOTORS = 0.1;
 
     VuforiaTrackables targetsSkyStone;
     List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
@@ -293,14 +292,14 @@ public class VuforiaClass {
 
                         if (translation.get(0) > (-5 * mmPerInch)) {
                             telemetry.addLine("Finished!");
-                            telemetry.addData("Distance To Target: ", translation.get(0) / mmPerInch);
+                            //Drop servo arm and pick up block
                         } else {
-                            //Moving robot towards the detected object
-                            //robotDrive.mixDrive(robotDrive.clamp(translation.get(0), -0.8, 0.8), robotDrive.clamp(translation.get(2), -0.8, 0.8), robotDrive.clamp(rotation.thirdAngle, -0.8, 0.8));
-                            telemetry.addData("Velocities", "%.1f %.1f %.0f",
-                                    translation.get(0) / mmPerInch,
-                                    translation.get(2) / mmPerInch,
-                                    rotation.thirdAngle);
+                            //PID Controller for sending values to the motors to seek the stone
+                           double forward = (-1 * translation.get(0) /mmPerInch) * P_MOTORS;
+                           double strafe = (-1 * translation.get(2) / mmPerInch) * P_MOTORS;
+                           double rot = (rotation.thirdAngle * P_MOTORS);
+
+                           robotDrive.mixDrive(forward, strafe, rot);
 
                         }
 
