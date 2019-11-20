@@ -18,9 +18,18 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 
+/**
+ * @see VuforiaLocalizer
+ */
+
 public class VuforiaClass {
-    RobotDrive robotDrive = new RobotDrive();
+    //RobotDrive robotDrive = new RobotDrive();
     Telemetry telemetry = null;
+
+    VuforiaTrackables targetsSkyStone;
+    List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+
+
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
     // 1) Camera Source.  Valid choices are:  BACK (behind screen) or FRONT (selfie side)
     // 2) Phone Orientation. Choices are: PHONE_IS_PORTRAIT = true (portrait) or PHONE_IS_PORTRAIT = false (landscape)
@@ -72,12 +81,13 @@ public class VuforiaClass {
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
 
-    public void InitVuforia(HardwareMap hardwareMap, Telemetry telemetry) {
+    public void InitVuforia(HardwareMap hardwareMap, Telemetry telem) {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
          * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
          */
+        telemetry = telem;
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
@@ -91,7 +101,7 @@ public class VuforiaClass {
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
-        VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
+        targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
 
         VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
         stoneTarget.setName("Stone Target");
@@ -121,7 +131,6 @@ public class VuforiaClass {
         rear2.setName("Rear Perimeter 2");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(targetsSkyStone);
 
         /**
@@ -227,8 +236,8 @@ public class VuforiaClass {
 
         // Next, translate the camera lens to where it is on the robot.
         // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
-        final float CAMERA_FORWARD_DISPLACEMENT  = 4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
-        final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * mmPerInch;   // eg: Camera is 8 Inches above ground
+        final float CAMERA_FORWARD_DISPLACEMENT  = 0 * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
+        final float CAMERA_VERTICAL_DISPLACEMENT = 0 * mmPerInch;   // eg: Camera is 8 Inches above ground
         final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
 
         OpenGLMatrix robotFromCamera = OpenGLMatrix
@@ -244,11 +253,11 @@ public class VuforiaClass {
     }
 
     public void seekStone() {
-        VectorF translation = lastLocation.getTranslation();
-        Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+        boolean targetReached = false;
+        VectorF translation;
+        Orientation rotation;
         targetsSkyStone.activate();
-        while (!isStopRequested()) {
-
+        while (targetReached == false) {
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
@@ -257,7 +266,7 @@ public class VuforiaClass {
                     targetVisible = true;
 
                     if(trackable.getName().equals("Stone Target")) {
-                    telemetry.addLine("Stone Target Found");
+                        telemetry.addLine("Stone Target Found");
                     }
                     // getUpdatedRobotLocation() will return null if no new information is available since
                     // the last time that call was made, or if the trackable is not currently visible.
@@ -280,19 +289,28 @@ public class VuforiaClass {
                 rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
 
-                //Moving robot towards the detected object
-                robotDrive.mixDrive((robotDrive.clamp(translation.get(0), -0.8 , 0.8) ,robotDrive.clamp( translation[1], -0.8, 0.8) , robotDrive.clamp(rotation.thirdAngle, -0.8, 0.8))
+                //Loop until the object is within 5 inches of the robot
+
+                        if (translation.get(0) > (-5 * mmPerInch)) {
+                            telemetry.addLine("Finished!");
+                            telemetry.addData("Distance To Target: ", translation.get(0) / mmPerInch);
+                        } else {
+                            //Moving robot towards the detected object
+                            //robotDrive.mixDrive(robotDrive.clamp(translation.get(0), -0.8, 0.8), robotDrive.clamp(translation.get(2), -0.8, 0.8), robotDrive.clamp(rotation.thirdAngle, -0.8, 0.8));
+                            telemetry.addData("Velocities", "%.1f %.1f %.0f",
+                                    translation.get(0) / mmPerInch,
+                                    translation.get(2) / mmPerInch,
+                                    rotation.thirdAngle);
+
+                        }
+
             }
             else {
                 telemetry.addData("Visible Target", "none");
             }
             telemetry.update();
-
         }
-
         // Disable Tracking when we are done;
         targetsSkyStone.deactivate();
     }
-    }
-
 }

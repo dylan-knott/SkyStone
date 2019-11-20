@@ -10,7 +10,7 @@ public class FindCenterOP extends LinearOpMode {
 
     public void runOpMode() {
         //Initialization Code
-        robotDrive.initializeRobot(hardwareMap);
+        robotDrive.initializeRobot(hardwareMap, telemetry);
 
 
         //Runs once when start is pressed
