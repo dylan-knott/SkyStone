@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc17223;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -13,22 +11,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.Locale;
 
 public class RobotDrive {
+    //Proportional Processing values
+    private final double P_Forward = 0.01;
+    private final double P_Strafe = 0.01;
+    private final double P_Turn = 0.01;
+
+
     Telemetry telemetry = null;
-    static double TURN_P = 0.01;
-    static int wheelDiameter = 4;
-    private DcMotor leftfront = null;
-    private DcMotor rightfront = null;
-    private DcMotor leftrear = null;
-    private DcMotor rightrear = null;
-    BNO055IMU imu = null;
-    DistanceSensor distf = null;
-    DistanceSensor distb = null;
-    DistanceSensor distl = null;
-    DistanceSensor distr = null;
+    final double TURN_P = 0.01;
+    final double wheelDiameter = 2.95276;
 
+    //Hardware
+    private DcMotor leftfront, leftrear, rightfront, rightrear = null;
+    private BNO055IMU imu = null;
+    private DistanceSensor dist = null;
+    private ColorSensor colorSensor = null;
+    private Servo LeftFServo, RightFServo, SideArm = null;
 
-    double intendedHeading;
-    public double motorPower = 0.5;
+    public final double motorPower = 0.5;
 
     //Debug the error angle in order to get this value
     private double turningBuffer = 3.092514343261712;
@@ -41,18 +41,21 @@ public class RobotDrive {
     void initializeRobot(HardwareMap hardwareMap, Telemetry telem) {
         telemetry = telem;
         RobotDrive.direction strafeDirection;
+
+        //Initialize Hardware
         leftfront = hardwareMap.dcMotor.get("front_left_motor");
         rightfront = hardwareMap.dcMotor.get("front_right_motor");
         leftrear = hardwareMap.dcMotor.get("back_left_motor");
         rightrear = hardwareMap.dcMotor.get("back_right_motor");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        distb = hardwareMap.get(DistanceSensor.class, "back_distance");
-        distf = hardwareMap.get(DistanceSensor.class, "front_distance");
-        distl = hardwareMap.get(DistanceSensor.class, "left_distance");
-        distr = hardwareMap.get(DistanceSensor.class, "right_distance");
+        dist = hardwareMap.get(DistanceSensor.class, "distance");
+        LeftFServo = hardwareMap.servo.get("front_left");
+        RightFServo = hardwareMap.servo.get("front_right");
+        SideArm = hardwareMap.servo.get("side_arm");
 
         leftfront.setDirection(DcMotor.Direction.REVERSE);
         leftrear.setDirection(DcMotor.Direction.REVERSE);
+
 
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -60,8 +63,6 @@ public class RobotDrive {
         parameters.loggingEnabled = false;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         imu.initialize(parameters);
-
-        double degreesError;
 
 
     }
@@ -181,6 +182,13 @@ public class RobotDrive {
     }
 
 
+    /*********************************************SERVOS*********************************************/
+
+    void SetSideArm(int desiredRotation, int maxRotation){
+        //set the servo to a value of 90 degrees, setPosition accepts a fraction, so the proportion required for your specific servo to reach 90 degrees can be obtained with desiredRotation / maxRotation
+        SideArm.setPosition(desiredRotation / maxRotation);
+    }
+
     /*******************************************UTILITIES*******************************************/
     //Creating a clamp method for both floats and doubles
     public static double clamp(double val, double min, double max) {
@@ -211,6 +219,14 @@ public class RobotDrive {
         rightfront.setPower(frontRightSpeed);
         leftrear.setPower(backLeftSpeed);
         rightrear.setPower(backRightSpeed);
-        telemetry.update();
+    }
+
+    //turning distance measurements into usable motor output via PI control (Proportional + Integral)
+    void DistanceToDrive(double forward, double right, double turn){
+
+        double ForwardOut = forward * P_Forward;
+        double RightOut = right * P_Strafe;
+        double TurnOut = turn * P_Turn;
+        mixDrive(ForwardOut, RightOut, TurnOut);
     }
 }

@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.ftc17223;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +25,16 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 public class VuforiaClass {
     RobotDrive robotDrive = new RobotDrive();
     Telemetry telemetry = null;
-    double P_MOTORS = 0.1;
-
     VuforiaTrackables targetsSkyStone;
     List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
 
+    //Thresholds for triggering the dropping of the arm
+    private final double distanceThreshold = 0.25;
+    private final double strafeThreshold = 1;
+    private final int rotThreshold = 5;
+
+    //Length from the block at which the robot will stop
+    private int armLength = 3;
 
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
     // 1) Camera Source.  Valid choices are:  BACK (behind screen) or FRONT (selfie side)
@@ -257,6 +264,7 @@ public class VuforiaClass {
         Orientation rotation;
         targetsSkyStone.activate();
         while (targetReached == false) {
+            robotDrive.mixDrive(0, 0.2, 0);
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
@@ -264,9 +272,6 @@ public class VuforiaClass {
                     telemetry.addData("Visible Target", trackable.getName());
                     targetVisible = true;
 
-                    if(trackable.getName().equals("Stone Target")) {
-                        telemetry.addLine("Stone Target Found");
-                    }
                     // getUpdatedRobotLocation() will return null if no new information is available since
                     // the last time that call was made, or if the trackable is not currently visible.
                     OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
@@ -288,18 +293,18 @@ public class VuforiaClass {
                 rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
 
-                //Loop until the object is within 5 inches of the robot
+                //Loop until the object is within the grasp of the robot
 
-                        if (translation.get(0) > (-5 * mmPerInch)) {
-                            telemetry.addLine("Finished!");
-                            //Drop servo arm and pick up block
+                        if (Math.abs(translation.get(0) + ((armLength - distanceThreshold) * mmPerInch)) < (distanceThreshold * mmPerInch) && Math.abs(translation.get(2)) < (strafeThreshold * mmPerInch) / 2 && Math.abs(rotation.thirdAngle) < rotThreshold / 2) {
+                            telemetry.addLine("Reached desired place");
+                            //Drop servo arm and pick up block+3
+
+                            robotDrive.SetSideArm(90, 180);
+                            return;
                         } else {
-                            //PID Controller for sending values to the motors to seek the stone
-                           double forward = (-1 * translation.get(0) /mmPerInch) * P_MOTORS;
-                           double strafe = (-1 * translation.get(2) / mmPerInch) * P_MOTORS;
-                           double rot = (rotation.thirdAngle * P_MOTORS);
 
-                           robotDrive.mixDrive(forward, strafe, rot);
+                            //If distance is past threshold, continue to move the motors.
+                           robotDrive.DistanceToDrive(-1 * translation.get(2) / mmPerInch,(translation.get(0) / mmPerInch) + armLength, -1 * rotation.thirdAngle);
 
                         }
 
