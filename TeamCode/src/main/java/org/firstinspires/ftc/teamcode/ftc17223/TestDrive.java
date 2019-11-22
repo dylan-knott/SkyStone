@@ -28,7 +28,7 @@ public class TestDrive extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
         //Initialization Code
-        //robotDrive.initializeRobot(hardwareMap, telemetry);
+        robotDrive.initializeRobot(hardwareMap, telemetry);
         vuforiaClass.InitVuforia(hardwareMap, telemetry);
 
         //Runs 1 time once start is pressed
