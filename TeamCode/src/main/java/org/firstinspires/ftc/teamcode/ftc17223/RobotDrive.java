@@ -24,11 +24,11 @@ public class RobotDrive {
     //Hardware
     private DcMotor leftfront, leftrear, rightfront, rightrear = null;
     private BNO055IMU imu = null;
-    private DistanceSensor dist = null;
-    private ColorSensor colorSensor = null;
-    private Servo LeftFServo, RightFServo, SideArm = null;
+    //private DistanceSensor dist = null;
+   // private ColorSensor colorSensor = null;
+    //private Servo LeftFServo, RightFServo, SideArm = null;
 
-    public final double motorPower = 0.5;
+    public final double motorPower = 1;
 
     //Debug the error angle in order to get this value
     private double turningBuffer = 3.092514343261712;
@@ -48,10 +48,10 @@ public class RobotDrive {
         leftrear = hardwareMap.dcMotor.get("back_left_motor");
         rightrear = hardwareMap.dcMotor.get("back_right_motor");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        dist = hardwareMap.get(DistanceSensor.class, "distance");
-        LeftFServo = hardwareMap.servo.get("front_left");
-        RightFServo = hardwareMap.servo.get("front_right");
-        SideArm = hardwareMap.servo.get("side_arm");
+       // dist = hardwareMap.get(DistanceSensor.class, "distance");
+       // LeftFServo = hardwareMap.servo.get("front_left");
+       // RightFServo = hardwareMap.servo.get("front_right");
+       // SideArm = hardwareMap.servo.get("side_arm");
 
         leftfront.setDirection(DcMotor.Direction.REVERSE);
         leftrear.setDirection(DcMotor.Direction.REVERSE);
@@ -184,10 +184,10 @@ public class RobotDrive {
 
     /*********************************************SERVOS*********************************************/
 
-    void SetSideArm(int desiredRotation, int maxRotation){
+   /* void SetSideArm(int desiredRotation, int maxRotation){
         //set the servo to a value of 90 degrees, setPosition accepts a fraction, so the proportion required for your specific servo to reach 90 degrees can be obtained with desiredRotation / maxRotation
         SideArm.setPosition(desiredRotation / maxRotation);
-    }
+   */
 
     /*******************************************UTILITIES*******************************************/
     //Creating a clamp method for both floats and doubles

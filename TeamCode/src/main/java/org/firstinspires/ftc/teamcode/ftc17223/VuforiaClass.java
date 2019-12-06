@@ -299,7 +299,7 @@ public class VuforiaClass {
                             telemetry.addLine("Reached desired place");
                             //Drop servo arm and pick up block+3
 
-                            robotDrive.SetSideArm(90, 180);
+                            //robotDrive.SetSideArm(90, 180);
                             return;
                         } else {
 
