@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import java.util.Collections;
 import java.util.Locale;
 
 public class RobotDrive {
@@ -19,16 +20,16 @@ public class RobotDrive {
 
     Telemetry telemetry = null;
     final double TURN_P = 0.01;
-    final double wheelDiameter = 2.95276;
+    final double wheelDiameter = 3.93701;
 
     //Hardware
     private DcMotor leftfront, leftrear, rightfront, rightrear = null;
     private BNO055IMU imu = null;
-    //private DistanceSensor dist = null;
-   // private ColorSensor colorSensor = null;
-    //private Servo LeftFServo, RightFServo, SideArm = null;
+    private DistanceSensor dist = null;
+    private ColorSensor colorSensor = null;
+    private Servo LeftFServo, RightFServo, SideArm = null;
 
-    public final double motorPower = 1;
+    public final double motorPower = 0.8;
 
     //Debug the error angle in order to get this value
     private double turningBuffer = 3.092514343261712;
@@ -84,22 +85,27 @@ public class RobotDrive {
     }
 
     void driveEncoder(double Inches) {
-        DcMotor motors[] = {leftfront, rightfront, leftrear, rightrear};
-        int encoderTicks = (int) ((360 / (wheelDiameter * Math.PI)) * Inches);
+        DcMotor motors[] = {leftfront, rightfront, rightrear, leftrear};
+        int encoderTicks = (int)((1440 / (wheelDiameter * Math.PI)) * Inches);
 
-        for (DcMotor motor : motors) {
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setTargetPosition(encoderTicks);
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motor.setPower(motorPower);
+        for (DcMotor motor: motors) motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftfront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftfront.setTargetPosition(encoderTicks);
+        leftfront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        for (byte i = 10; i > 0; i--) {
+            for (DcMotor motor : motors) {
+                motor.setPower(motorPower / i);
+            }
         }
 
-        while (leftfront.isBusy() && leftrear.isBusy() && rightfront.isBusy() && rightrear.isBusy()) {
+        while (leftfront.isBusy()) {
             //wait until the motors are done running
         }
 
         for (DcMotor motor : motors) motor.setPower(0);
-        for (DcMotor motor : motors) motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         return;
     }
 
@@ -134,15 +140,20 @@ public class RobotDrive {
         rightrear.setTargetPosition(encoderTicks);
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motor.setPower(motorPower);
+        }
+        for(byte i = 10; i > 0; i--) {
+            for (DcMotor motor : motors) {
+                motor.setPower(motorPower / 10);
+            }
         }
 
-
-        while (leftfront.isBusy() && leftrear.isBusy() && rightfront.isBusy() && rightrear.isBusy()) {
+        while (leftfront.isBusy()) {
             //wait until the motors are done running
         }
         for (DcMotor motor : motors) {
             motor.setPower(0);
+        }
+        for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         return;
@@ -173,7 +184,6 @@ public class RobotDrive {
         telemetry.addData("Error Degrees: ", Math.abs(target_angle - angles.firstAngle) % 360);
         telemetry.update();
 
-
     }
 
     //Read value for imu and convert to double
@@ -184,10 +194,15 @@ public class RobotDrive {
 
     /*********************************************SERVOS*********************************************/
 
-   /* void SetSideArm(int desiredRotation, int maxRotation){
-        //set the servo to a value of 90 degrees, setPosition accepts a fraction, so the proportion required for your specific servo to reach 90 degrees can be obtained with desiredRotation / maxRotation
-        SideArm.setPosition(desiredRotation / maxRotation);
-   */
+   void SetSideArm(int desiredRotation, int maxRotation) {
+       //set the servo to a value of 90 degrees, setPosition accepts a fraction, so the proportion required for your specific servo to reach 90 degrees can be obtained with desiredRotation / maxRotation
+       SideArm.setPosition(desiredRotation / maxRotation);
+   }
+
+   void grabMat(int desiredRotation, int maxRotation) {
+       LeftFServo.setPosition(desiredRotation / maxRotation);
+       RightFServo.setPosition(desiredRotation / maxRotation);
+   }
 
     /*******************************************UTILITIES*******************************************/
     //Creating a clamp method for both floats and doubles

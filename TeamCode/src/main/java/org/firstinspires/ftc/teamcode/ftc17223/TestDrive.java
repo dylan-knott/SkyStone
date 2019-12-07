@@ -34,19 +34,16 @@ public class TestDrive extends LinearOpMode {
         //Runs 1 time once start is pressed
         waitForStart();
 
-        vuforiaClass.seekStone();
+        //vuforiaClass.seekStone();
 
         //Runs in a loop after start
-        while (opModeIsActive()) {
+        //while (opModeIsActive()) {
 
 
-        robotDrive.driveEncoder(100);
-        robotDrive.gyroTurn(180);
-        robotDrive.strafeEncoder( 100, RobotDrive.direction.left);
-        robotDrive.driveEncoder(100);
-        robotDrive.strafeEncoder( 100, RobotDrive.direction.right);
-        robotDrive.gyroTurn(-90);
-        }
+        robotDrive.driveEncoder(10);
+        //robotDrive.gyroTurn(90);
+        //this.sleep(10000);
+        //}
 
     }
 

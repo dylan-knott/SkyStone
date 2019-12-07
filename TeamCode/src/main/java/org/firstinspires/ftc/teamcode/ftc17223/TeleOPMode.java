@@ -18,6 +18,8 @@ public class TeleOPMode extends LinearOpMode {
             double rotate = gamepad1.right_stick_x;
 
             robot.mixDrive(forward, strafe, rotate);
+
+
         }
 
     }
