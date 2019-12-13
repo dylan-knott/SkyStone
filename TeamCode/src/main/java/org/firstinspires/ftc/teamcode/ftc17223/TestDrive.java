@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.ftc17223;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 /**-----------Hardware Map-------------
  Motors:
  back_right_motor
@@ -24,25 +25,25 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Autonomous(name = "TestDrive")
 public class TestDrive extends LinearOpMode {
     RobotDrive robotDrive = new RobotDrive();
-    VuforiaClass vuforiaClass = new VuforiaClass();
 
     public void runOpMode() throws InterruptedException {
         //Initialization Code
         robotDrive.initializeRobot(hardwareMap, telemetry);
-        vuforiaClass.InitVuforia(hardwareMap, telemetry);
 
         //Runs 1 time once start is pressed
         waitForStart();
 
-        //vuforiaClass.seekStone();
 
         //Runs in a loop after start
         //while (opModeIsActive()) {
 
 
-        robotDrive.driveEncoder(10);
+        //robotDrive.driveEncoder(12);
         //robotDrive.gyroTurn(90);
-        //this.sleep(10000);
+        robotDrive.driveEncoder(12);
+        robotDrive.gyroTurn(90);
+        robotDrive.strafeEncoder(12, RobotDrive.direction.left);
+        robotDrive.gyroTurn(-90);
         //}
 
     }
