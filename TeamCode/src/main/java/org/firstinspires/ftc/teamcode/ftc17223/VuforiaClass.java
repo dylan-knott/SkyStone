@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc17223;
 
 
+import android.graphics.Camera;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -264,7 +265,7 @@ public class VuforiaClass {
         Orientation rotation;
         targetsSkyStone.activate();
         while (targetReached == false) {
-            robotDrive.mixDrive(0, 0.2, 0);
+            robotDrive.mixDrive(0.2, 0, 0);
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
