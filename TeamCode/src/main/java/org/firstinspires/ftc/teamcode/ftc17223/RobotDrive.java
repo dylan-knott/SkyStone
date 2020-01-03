@@ -12,8 +12,8 @@ import java.util.Locale;
 
 public class RobotDrive {
     //Proportional Processing values
-    private final double P_Forward = 0.01;
-    private final double P_Strafe = 0.01;
+    private final double P_Forward = 0.05;
+    private final double P_Strafe = 0.05;
     private final double P_Turn = 0.01;
 
 
@@ -22,11 +22,12 @@ public class RobotDrive {
     final double wheelDiameter = 3.93701;
 
     //Hardware
-    private DcMotor leftfront, leftrear, rightfront, rightrear, armLift = null;
+    private DcMotor leftfront, leftrear, rightfront, rightrear = null;
     private BNO055IMU imu = null;
     private DistanceSensor dist = null;
     private ColorSensor colorSensor = null;
-    private Servo BlockGrips, TopServo, MatServos, SideArm = null;
+    public Servo BlockGrips, TopServo, MatServos, SideArm = null;
+    private DcMotorController armLift;
 
     public final double motorPower = 0.8;
     public final double liftPower = 0.5;
@@ -48,20 +49,20 @@ public class RobotDrive {
         rightfront = hardwareMap.dcMotor.get("front_right_motor");
         leftrear = hardwareMap.dcMotor.get("back_left_motor");
         rightrear = hardwareMap.dcMotor.get("back_right_motor");
-        //armLift = hardwareMap.dcMotor.get("armLift");
+       // armLift = hardwareMap.dcMotorController.get("armLift");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        //dist = hardwareMap.get(DistanceSensor.class, "distance");
-        //BlockGrips = hardwareMap.servo.get("claw_servos");
-        //TopServo = hardwareMap.servo.get("top_servo");
-        //MatServos = hardwareMap.servo.get("mat_servos");
-        //SideArm = hardwareMap.servo.get("side_arm");
-        //colorSensor = hardwareMap.get(ColorSensor.class, "colorSense");
+       // dist = hardwareMap.get(DistanceSensor.class, "distance");
+       // BlockGrips = hardwareMap.servo.get("claw_servos");
+        TopServo = hardwareMap.servo.get("top_servo");
+        MatServos = hardwareMap.servo.get("mat_servos");
+        SideArm = hardwareMap.servo.get("side_arm");
+       // colorSensor = hardwareMap.get(ColorSensor.class, "colorSense");
 
         //armLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //armLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftfront.setDirection(DcMotor.Direction.REVERSE);
         leftrear.setDirection(DcMotor.Direction.REVERSE);
-
+        MatServos.setDirection(Servo.Direction.REVERSE);
 
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -93,7 +94,7 @@ public class RobotDrive {
     //Send this function a number of inches and it will drive that distance using the encoders on the motors.
     void driveEncoder(double Inches) {
         float initialHeading = getHeading();
-        DcMotor motors[] = {leftfront, rightfront, rightrear, leftrear};
+        DcMotor motors[] = {leftfront, rightfront, leftrear, rightrear};
         int encoderTicks = (int)((1440 / (wheelDiameter * Math.PI)) * Inches);
 
         for (DcMotor motor: motors) {
@@ -102,21 +103,30 @@ public class RobotDrive {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
+        for (DcMotor motor: motors) {
+            motor.setPower(motorPower);
+        }
 
 
-        while (leftfront.isBusy()) {
+        while (leftfront.isBusy() && rightfront.isBusy() && leftrear.isBusy() && rightrear.isBusy()) {
             //wait until the motors are done running
-            while (Math.abs((initialHeading - getHeading()) % 360) > 1) {
+           while (Math.abs((initialHeading - getHeading()) % 360) > 1) {
                 double degreesCorrect = (initialHeading - getHeading()) % 360;
                 double motorCorrect = clamp(degreesCorrect * TURN_P, -.4, .4);
                 leftfront.setPower(motorPower - motorCorrect);
                 leftrear.setPower(motorPower - motorCorrect);
                 rightfront.setPower(motorPower + motorCorrect);
                 rightrear.setPower(motorPower + motorCorrect);
+
+                telemetry.addData("Rear Left", leftrear.getCurrentPosition());
+                telemetry.addData("Front Left", leftfront.getCurrentPosition());
+                telemetry.update();
             }
         }
 
-        for (DcMotor motor : motors) motor.setPower(0);
+        for (DcMotor motor : motors) {
+            motor.setPower(0);
+        }
         for (DcMotor motor : motors) motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         return;
     }
@@ -220,15 +230,19 @@ public class RobotDrive {
     /*********************************************SERVOS*********************************************/
 
     //Sets the angle of the servo on the side arm. Give value in degrees as well as the maximum turning degrees of the servo. Converts to a fraction usable by the servo
-   void SetSideArm(int desiredRotation, int maxRotation) {
+   void SetSideArm(float desiredRotation, int maxRotation) {
        SideArm.setPosition(desiredRotation / maxRotation);
    }
    //Activates the back servos used to grab the mat, send angle of rotation in degrees as well as the max angle of the servo. Converts to a fraction usable by the servo
-   void grabMat(int desiredRotation) { MatServos.setPosition(desiredRotation /280);}
+   void grabMat(float desiredRotation) {
+       MatServos.setPosition(desiredRotation);
+   }
 
-   void controlClaw(int desiredRotation) {
-       BlockGrips.setPosition(desiredRotation / 280);
-       TopServo.setPosition(desiredRotation / 180 );
+   void controlClaw(float desiredRotation) {
+       //BlockGrips.setPosition(desiredRotation / 280);
+       TopServo.setPosition(desiredRotation);
+       telemetry.addData("Output to servo: ", desiredRotation);
+       telemetry.update();
    }
 
     /*******************************************UTILITIES*******************************************/
@@ -273,11 +287,11 @@ public class RobotDrive {
         mixDrive(ForwardOut, RightOut, TurnOut);
     }
 
-    void LiftEncoder(double ticks) {
+   /* void LiftEncoder(double ticks) {
         armLift.setTargetPosition((int)(armLift.getCurrentPosition() + ticks));
         if (armLift.getTargetPosition() < 0) {armLift.setTargetPosition(0);}
         armLift.setPower(liftPower);
         while (armLift.isBusy());
         armLift.setPower(0);
-    }
+    } */
 }

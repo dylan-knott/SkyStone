@@ -10,7 +10,7 @@ public class TeleOPMode extends LinearOpMode {
     public void runOpMode() {
         boolean mat = false;
         boolean claw = false;
-
+        boolean sideArm = false; //Outside of loop()
         robot.initializeRobot(hardwareMap, telemetry);
 
         waitForStart();
@@ -21,30 +21,20 @@ public class TeleOPMode extends LinearOpMode {
             double strafe = gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
             robot.mixDrive(forward, strafe, rotate);
-            if (gamepad1.right_trigger > 0.5) {
-               if (mat == false) {
-                   robot.grabMat(90);
-                   mat = true;
-                }
-               else {
-                   robot.grabMat(0);
-                   mat = false;
-               }
+            robot.grabMat(gamepad1.right_trigger * ((float)9 / 28));
 
-            }
+
+            if(gamepad1.a && !sideArm) {
+                if(robot.SideArm.getPosition() == 0) robot.SideArm.setPosition((float) 110 / 180);
+                else robot.SideArm.setPosition(0);
+                sideArm = true;
+            } else if(!gamepad1.a) sideArm = false;
 
             //Gamepad 2
-            robot.LiftEncoder(gamepad2.right_stick_y);
-            if (gamepad2.right_trigger > 0.5) {
-                if (claw == false) {
-                    robot.controlClaw(25);
-                    claw = true;
-                    }
-                else {
-                    robot.controlClaw(0);
-                    claw = false;
-                }
-                }
+            //robot.LiftEncoder(gamepad2.right_stick_y);
+            robot.controlClaw(gamepad1.left_trigger);
+            telemetry.addData("Controller input: ", gamepad1.left_trigger);
+            telemetry.update();
 
             }
         }

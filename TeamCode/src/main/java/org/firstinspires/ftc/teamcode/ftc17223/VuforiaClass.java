@@ -24,14 +24,14 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 
 public class VuforiaClass {
-    RobotDrive robotDrive = new RobotDrive();
     Telemetry telemetry = null;
+    RobotDrive robotDrive = new RobotDrive();
     VuforiaTrackables targetsSkyStone;
     List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
 
     //Thresholds for triggering the dropping of the arm
     private final double distanceThreshold = 0.25;
-    private final double strafeThreshold = 1;
+    private final double strafeThreshold = 0.75;
     private final int rotThreshold = 5;
 
     //Length from the block at which the robot will stop
@@ -95,6 +95,7 @@ public class VuforiaClass {
          * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
          */
         telemetry = telem;
+        robotDrive.initializeRobot(hardwareMap, telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
@@ -257,6 +258,7 @@ public class VuforiaClass {
         }
 
 
+
     }
 
     public void seekStone() {
@@ -265,7 +267,6 @@ public class VuforiaClass {
         Orientation rotation;
         targetsSkyStone.activate();
         while (targetReached == false) {
-            robotDrive.mixDrive(0.2, 0, 0);
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
@@ -296,21 +297,22 @@ public class VuforiaClass {
 
                 //Loop until the object is within the grasp of the robot
 
-                        if (Math.abs(translation.get(0) + ((armLength - distanceThreshold) * mmPerInch)) < (distanceThreshold * mmPerInch) && Math.abs(translation.get(2)) < (strafeThreshold * mmPerInch) / 2 && Math.abs(rotation.thirdAngle) < rotThreshold / 2) {
+                        if (translation.get(0) > -3 * mmPerInch && Math.abs(translation.get(2)) < (strafeThreshold * mmPerInch) /*&& Math.abs(rotation.thirdAngle) < rotThreshold*/) {
                             telemetry.addLine("Reached desired place");
-                            //Drop servo arm and pick up block+3
-
-                            //robotDrive.SetSideArm(90, 180);
+                            //Drop servo arm and pick up block
+                            robotDrive.mixDrive(0, 0, 0);
+                            robotDrive.SetSideArm(110, 180);
                             return;
                         } else {
 
                             //If distance is past threshold, continue to move the motors.
-                           robotDrive.DistanceToDrive(-1 * translation.get(2) / mmPerInch,(translation.get(0) / mmPerInch) + armLength, -1 * rotation.thirdAngle);
+                           robotDrive.DistanceToDrive(-1 * translation.get(2) / mmPerInch + armLength,-1 * (translation.get(0) / mmPerInch), 1 * rotation.thirdAngle);
 
                         }
 
             }
             else {
+                robotDrive.mixDrive(0.2, 0, 0);
                 telemetry.addData("Visible Target", "none");
             }
             telemetry.update();

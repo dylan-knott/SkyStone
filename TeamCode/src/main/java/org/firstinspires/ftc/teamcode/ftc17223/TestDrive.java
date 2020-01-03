@@ -25,26 +25,22 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Autonomous(name = "TestDrive")
 public class TestDrive extends LinearOpMode {
     RobotDrive robotDrive = new RobotDrive();
+    VuforiaClass vuforiaClass = new VuforiaClass();
 
     public void runOpMode() throws InterruptedException {
         //Initialization Code
         robotDrive.initializeRobot(hardwareMap, telemetry);
+        vuforiaClass.InitVuforia(hardwareMap, telemetry);
 
         //Runs 1 time once start is pressed
         waitForStart();
 
 
         //Runs in a loop after start
-        while (opModeIsActive()) {
-
-
+        //while (opModeIsActive()) {
         //robotDrive.driveEncoder(12);
-        //robotDrive.gyroTurn(90);
-        robotDrive.strafeEncoder(12, RobotDrive.direction.right);
-        robotDrive.gyroTurn(90);
-        robotDrive.strafeEncoder(12, RobotDrive.direction.left);
-        robotDrive.gyroTurn(-90);
-        }
+        vuforiaClass.seekStone();
+        //}
 
     }
 
