@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.ftc17223;
 
-import android.text.format.Time;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -24,27 +22,25 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  back_distance
  **/
 
-@Autonomous(name = "TestDrive")
-public class TestDrive extends LinearOpMode {
+@Autonomous(name = "ColorTest")
+public class ColorTest extends LinearOpMode {
     RobotDrive robotDrive = new RobotDrive();
     VuforiaClass vuforiaClass = new VuforiaClass();
 
     public void runOpMode() throws InterruptedException {
         //Initialization Code
-        robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.red);
-        vuforiaClass.InitVuforia(hardwareMap, telemetry, RobotDrive.color.red);
+        robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.blue);
+        vuforiaClass.InitVuforia(hardwareMap, telemetry, RobotDrive.color.blue);
 
         //Runs 1 time once start is pressed
         waitForStart();
 
 
         //Runs in a loop after start
-        while (opModeIsActive()) {
-        robotDrive.driveEncoder(12);
-        robotDrive.gyroTurn(90);
-        robotDrive.strafeEncoder(12, RobotDrive.direction.right);
-        robotDrive.gyroTurn(-90);
-        }
+        //while (opModeIsActive()) {
+        robotDrive.seekMat();
+
+        //}
 
     }
 
