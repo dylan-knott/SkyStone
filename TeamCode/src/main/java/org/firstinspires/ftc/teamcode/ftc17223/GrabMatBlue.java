@@ -18,7 +18,8 @@ public class AutonomousTemp extends LinearOpMode {
         //Code to run once once start button is pressed
         AutonomousTemp.java
 
-        while (opModeIsActive()) {
+
+            while (opModeIsActive()) {
         //Code to run repeatedly once the op mode has started
 
 
