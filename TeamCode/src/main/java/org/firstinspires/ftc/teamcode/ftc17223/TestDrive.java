@@ -39,12 +39,9 @@ public class TestDrive extends LinearOpMode {
 
 
         //Runs in a loop after start
-        while (opModeIsActive()) {
-        robotDrive.driveEncoder(12);
+        //while (opModeIsActive()) {
         robotDrive.gyroTurn(90);
-        robotDrive.strafeEncoder(12, RobotDrive.direction.right);
-        robotDrive.gyroTurn(-90);
-        }
+        //}
 
     }
 

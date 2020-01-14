@@ -232,7 +232,7 @@ public class VuforiaClass {
 
         // We need to rotate the camera around it's long axis to bring the correct camera forward.
         if (CAMERA_CHOICE == BACK) {
-            phoneYRotate = -90;
+            phoneYRotate = -75;
         } else {
             phoneYRotate = 90;
         }
@@ -297,7 +297,7 @@ public class VuforiaClass {
 
                 //Loop until the object is within the grasp of the robot
 
-                        if (translation.get(0) > -6 * mmPerInch && Math.abs(translation.get(2)) < (strafeThreshold * mmPerInch) /*&& Math.abs(rotation.thirdAngle) < rotThreshold*/) {
+                        if (translation.get(0) > -6 * mmPerInch && Math.abs(translation.get(2)) < (strafeThreshold * mmPerInch) && Math.abs(rotation.thirdAngle) < rotThreshold) {
                             telemetry.addLine("Reached desired place");
                             //Drop servo arm and pick up block
                             robotDrive.mixDrive(0, 0, 0);
