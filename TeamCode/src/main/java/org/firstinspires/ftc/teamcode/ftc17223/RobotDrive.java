@@ -23,7 +23,7 @@ public class RobotDrive {
     //Proportional Value used in self-correcting gyro code for encoder driving
     private final double TURN_P = 0.01;
     private final double wheelDiameter = 3.93701;
-    private final double colorThreshold = 200;
+    public double colorThreshold = 200;
     final double tickThreshold = 50;
 
     //Hardware
@@ -328,6 +328,16 @@ public class RobotDrive {
                 rightfront.getCurrentPosition(),
                 leftrear.getCurrentPosition(),
                 rightrear.getCurrentPosition());
+        telemetry.update();
+    }
+
+    void resetEncoders() {
+        DcMotor motors[] = {leftfront, rightfront, leftrear, rightrear};
+        for (DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        telemetry.addLine("Encoders Reset!");
         telemetry.update();
     }
 
