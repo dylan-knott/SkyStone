@@ -10,15 +10,19 @@ public class RedStoneNavFar extends LinearOpMode {
 
     public void runOpMode() {
         //Initialization code
+        telemetry.addLine("Initializing");
+        telemetry.update();
         RobotDrive robotDrive = new RobotDrive();
         VuforiaClass vuforiaClass = new VuforiaClass();
         robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.red);
         vuforiaClass.InitVuforia(hardwareMap, telemetry, RobotDrive.color.red);
         waitForStart();
+        telemetry.addLine("Robot Initialized");
+        telemetry.update();
         //Code to run once once start button is pressed
 
-        robotDrive.driveEncoder(23);
-        robotDrive.strafeEncoder(10, RobotDrive.direction.left);
+        robotDrive.driveEncoder(20);
+        robotDrive.strafeEncoder(5, RobotDrive.direction.left);
         robotDrive.gyroTurn(-90);
         telemetry.addLine("Searching for stone");
         telemetry.update();

@@ -21,13 +21,13 @@ public class RobotDrive {
     Telemetry telemetry = null;
     color teamColor = null;
     //Proportional Value used in self-correcting gyro code for encoder driving
-    private final double TURN_P = 0.01;
+    private final double TURN_P = 0.02;
     private final double wheelDiameter = 3.93701;
     public double colorThreshold = 200;
     final double tickThreshold = 50;
 
     //Hardware
-    private DcMotor leftfront, leftrear, rightfront, rightrear = null;
+    private DcMotorEx leftfront, leftrear, rightfront, rightrear = null;
     private BNO055IMU imu = null;
     private DistanceSensor dist = null;
     public ColorSensor colorSensor = null;
@@ -56,10 +56,10 @@ public class RobotDrive {
         teamColor = clr;
 
         //Initialize Hardware
-        leftfront = hardwareMap.dcMotor.get("front_left_motor");
-        rightfront = hardwareMap.dcMotor.get("front_right_motor");
-        leftrear = hardwareMap.dcMotor.get("back_left_motor");
-        rightrear = hardwareMap.dcMotor.get("back_right_motor");
+        leftfront = (DcMotorEx)hardwareMap.dcMotor.get("front_left_motor");
+        rightfront = (DcMotorEx)hardwareMap.dcMotor.get("front_right_motor");
+        leftrear = (DcMotorEx)hardwareMap.dcMotor.get("back_left_motor");
+        rightrear = (DcMotorEx)hardwareMap.dcMotor.get("back_right_motor");
         armLift = hardwareMap.crservo.get("arm_lift");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -85,6 +85,12 @@ public class RobotDrive {
         MatServos.setDirection(Servo.Direction.REVERSE);
         BlockGrips.setDirection(Servo.Direction.REVERSE);
         armLift.setDirection(CRServo.Direction.REVERSE);
+
+        rightfront.setPositionPIDFCoefficients(7.5);
+        rightrear.setPositionPIDFCoefficients(7.5);
+        leftfront.setPositionPIDFCoefficients(7.5);
+        leftrear.setPositionPIDFCoefficients(7.5);
+
 
         //Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -202,7 +208,7 @@ public class RobotDrive {
         leftrear.setPower(-1 * motorPower);
         rightrear.setPower(motorPower);
 
-        while (Math.abs(leftfront.getCurrentPosition() - leftfront.getTargetPosition()) > 10) {
+        while (leftfront.isBusy() || rightfront.isBusy()) {
             //wait until the motors are done running
 
 
@@ -272,23 +278,23 @@ public class RobotDrive {
        SideArm.setPosition(desiredRotation / maxRotation);
    }
    //Activates the back servos used to grab the mat, send angle of rotation in degrees as well as the max angle of the servo. Converts to a fraction usable by the servo
-   void seekMat() throws InterruptedException {
+   void seekMat() {
        if (colorSensor instanceof SwitchableLight) {
            ((SwitchableLight)colorSensor).enableLight(true);
        }
 
-       mixDrive(0.3, 0, 0);
+       mixDrive(0.2, 0, 0);
        if (teamColor == color.red) {
            while (colorSensor.red() < colorThreshold){
            }
            mixDrive(0, 0, 0);
            grabMat(90);
            mixDrive(-0.3, 0, 0);
-           //while (dist.getDistance(DistanceUnit.INCH) > 2);
-           Thread.sleep(1000);
+           while (dist.getDistance(DistanceUnit.INCH) > 2);
            grabMat(0);
            mixDrive(0, -motorPower, 0);
-           Thread.sleep(1000);
+           while (colorSensor.red() < colorThreshold);
+           strafeEncoder(3, RobotDrive.direction.right);
            mixDrive(0,0,0);
        }
        else {
@@ -297,12 +303,11 @@ public class RobotDrive {
            mixDrive(0, 0, 0);
            grabMat(90);
            mixDrive(-0.7, 0, 0);
-           //while (dist.getDistance(DistanceUnit.INCH) > 2);
-           Thread.sleep(1000);
+           while (dist.getDistance(DistanceUnit.INCH) > 2);
            grabMat(0);
            mixDrive(0, motorPower, 0);
-           Thread.sleep(1000);
-           mixDrive(0,0,0);
+           while (colorSensor.blue() < colorThreshold);
+           strafeEncoder(3, RobotDrive.direction.right);
 
        }
 
