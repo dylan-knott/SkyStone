@@ -85,6 +85,7 @@ public class VuforiaClass {
     private OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
     private boolean targetVisible = false;
+    private boolean foundOnce = false;
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
@@ -265,6 +266,8 @@ public class VuforiaClass {
 
     public void seekStone() {
         boolean targetReached = false;
+        boolean speedSet = false;
+        foundOnce = false;
         VectorF translation;
         Orientation rotation;
         targetsSkyStone.activate();
@@ -290,6 +293,8 @@ public class VuforiaClass {
             if (targetVisible) {
                 // express position (translation) of robot in inches.
                 translation = lastLocation.getTranslation();
+                foundOnce = true;
+                speedSet = false;
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
 
@@ -299,7 +304,7 @@ public class VuforiaClass {
 
                 //Loop until the object is within the grasp of the robot
 
-                        if (translation.get(0) > -6 * mmPerInch && Math.abs(translation.get(2)) < (strafeThreshold * mmPerInch) && Math.abs(rotation.thirdAngle) < rotThreshold) {
+                        if (translation.get(0) > -6.5 * mmPerInch && Math.abs(translation.get(1)) < (strafeThreshold * mmPerInch) && Math.abs(rotation.thirdAngle) < rotThreshold) {
                             telemetry.addLine("Reached desired place");
                             //Drop servo arm and pick up block
                             targetReached = true;
@@ -309,16 +314,23 @@ public class VuforiaClass {
                         } else {
 
                             //If distance is past threshold, continue to move the motors.
-                           robotDrive.DistanceToDrive(-1 * translation.get(2) / mmPerInch + armLength,-1 * (translation.get(0) / mmPerInch), 1 * rotation.thirdAngle);
+                           robotDrive.DistanceToDrive(-1 * translation.get(1) / mmPerInch,-1 * (translation.get(0) / mmPerInch) - armLength, rotation.thirdAngle);
 
                         }
 
             }
             else {
-                if (teamColor == RobotDrive.color.blue)
-                robotDrive.mixDrive(0.3, 0, 0);
-                else robotDrive.mixDrive (-0.3, 0, 0);
-                telemetry.addData("Visible Target", "none");
+                if (!foundOnce && !speedSet) {
+                    if (teamColor == RobotDrive.color.blue)
+                        robotDrive.mixDrive(0.05, 0, 0);
+                    else robotDrive.mixDrive(-0.05, 0, 0);
+                    telemetry.addData("Visible Target", "none");
+                    speedSet = true;
+                }
+                else if (foundOnce && !speedSet) {
+                    robotDrive.mixDrive(0,-0.1, 0);
+                    speedSet = true;
+                    }
             }
             telemetry.update();
         }

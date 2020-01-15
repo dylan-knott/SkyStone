@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.vuforia.Vuforia;
 
 @Autonomous(name = "Red 1 Stone Nav Far")
-//Remove this when making your op mode, this is only here so that the template doesn't show in the app
-@Disabled
 public class RedStoneNavFar extends LinearOpMode {
 
     public void runOpMode() {

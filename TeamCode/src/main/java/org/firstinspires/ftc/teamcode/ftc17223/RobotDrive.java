@@ -14,7 +14,7 @@ import java.util.Locale;
 public class RobotDrive {
     //Proportional Processing values for distance to drive
     private final double P_Forward = 0.05;
-    private final double P_Strafe = 0.05;
+    private final double P_Strafe = 0.025;
     private final double P_Turn = 0.01;
 
 
@@ -39,7 +39,7 @@ public class RobotDrive {
     public double liftPower = 0.4;
 
     //Debug the error angle in order to get this value
-    private double turningBuffer = 3.4820556640625;
+    private double turningBuffer = 0;
 
     enum direction {
         left, right;
@@ -92,6 +92,11 @@ public class RobotDrive {
         parameters.loggingEnabled = false;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         imu.initialize(parameters);
+
+        SideArm.setPosition(0);
+        MatServos.setPosition(0);
+        TopServo.setPosition(0);
+        BlockGrips.setPosition(0);
     }
 
 
@@ -119,9 +124,10 @@ public class RobotDrive {
     //Send this function a number of inches and it will drive that distance using the encoders on the motors.
     void driveEncoder(double Inches) {
         float initialHeading = getHeading();
+        int encoderTicks = 0;
         DcMotor motors[] = {leftfront, rightfront, leftrear, rightrear};
-        int encoderTicks = (int)(480 * (float)( Inches / (wheelDiameter * Math.PI)));
-
+        if (Inches > 0) encoderTicks = (int)(480 * (float)((Inches - 1) / (wheelDiameter * Math.PI)));
+        else if(Inches < 0) encoderTicks = (int)(480 * (float)((Inches + 1) / (wheelDiameter * Math.PI)));
          for (DcMotor motor: motors) {
              motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
              motor.setTargetPosition(encoderTicks);
@@ -132,7 +138,7 @@ public class RobotDrive {
              motor.setPower(motorPower);
          }
 
-        while (leftfront.isBusy() || leftrear.isBusy() || rightrear.isBusy() || rightfront.isBusy()) {
+        while (Math.abs(leftfront.getCurrentPosition() - leftfront.getTargetPosition()) > 30) {
             //wait until the motors are done running
            if (Math.abs((initialHeading - getHeading()) % 360) > 1) {
                double degreesCorrect = (initialHeading - getHeading()) % 360;
@@ -149,7 +155,7 @@ public class RobotDrive {
                 telemetry.update();
         }
         for (DcMotor motor : motors)
-            leftfront.setPower(0);
+            motor.setPower(0);
 
         for (DcMotor motor : motors)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -179,8 +185,9 @@ public class RobotDrive {
     //Send this function a distance in inches as well as a direction (Ex: RobotDrive.direction.right) and it will strafe that direction for the specified distance
     void strafeEncoder(double Inches, RobotDrive.direction direction) {
         float initialHeading = getHeading();
-        DcMotor motors[] = {leftfront, rightfront, leftrear, rightrear,};
-        int encoderTicks = (int)(480 * (float)( Inches / (wheelDiameter * Math.PI)));
+        DcMotor motors[] = {leftfront, rightfront, leftrear, rightrear};
+
+        int encoderTicks = (int)(480 * (float)(Inches / (wheelDiameter * Math.PI)));
         if (direction == RobotDrive.direction.left) encoderTicks *= -1;
         for (DcMotor motor : motors) motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftfront.setTargetPosition(encoderTicks);
@@ -190,16 +197,18 @@ public class RobotDrive {
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-
         leftfront.setPower(motorPower);
         rightfront.setPower(-1 * motorPower);
         leftrear.setPower(-1 * motorPower);
         rightrear.setPower(motorPower);
-        while (leftfront.isBusy() || rightfront.isBusy() || leftrear.isBusy()|| rightrear.isBusy()) {
+
+        while (Math.abs(leftfront.getCurrentPosition() - leftfront.getTargetPosition()) > 10) {
             //wait until the motors are done running
+
+
             if (Math.abs((initialHeading - getHeading()) % 360) > 1) {
                 double degreesCorrect = (initialHeading - getHeading()) % 360;
-                double motorCorrect = clamp(degreesCorrect * TURN_P, -.4, .4);
+                double motorCorrect = clamp(degreesCorrect * TURN_P, -.6, .6);
                 leftfront.setPower(motorPower - motorCorrect);
                 leftrear.setPower(motorPower - motorCorrect);
                 rightfront.setPower(motorPower + motorCorrect);
@@ -303,7 +312,7 @@ public class RobotDrive {
    }
 
     void grabMat(float desiredRotation) {
-       MatServos.setPosition(desiredRotation / 280);
+    MatServos.setPosition(desiredRotation / 280);
    }
 
    void controlClaw(float desiredRotation) {

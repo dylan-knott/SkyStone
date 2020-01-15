@@ -30,17 +30,20 @@ public class TestDrive extends LinearOpMode {
     VuforiaClass vuforiaClass = new VuforiaClass();
 
     public void runOpMode() throws InterruptedException {
+        telemetry.addLine("Initializing");
+        telemetry.update();
         //Initialization Code
-        robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.red);
-        vuforiaClass.InitVuforia(hardwareMap, telemetry, RobotDrive.color.red);
-
+        robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.blue);
+        vuforiaClass.InitVuforia(hardwareMap, telemetry, RobotDrive.color.blue);
+        telemetry.addLine("Robot is initialized");
+        telemetry.update();
         //Runs 1 time once start is pressed
         waitForStart();
 
 
         //Runs in a loop after start
         //while (opModeIsActive()) {
-        robotDrive.gyroTurn(90);
+        robotDrive.driveEncoder(10);
         //}
 
     }

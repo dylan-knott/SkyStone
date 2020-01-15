@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "Blue 1 Stone Nav Far")
-//Remove this when making your op mode, this is only here so that the template doesn't show in the app
-@Disabled
 public class BlueStoneNavFar extends LinearOpMode {
 
     public void runOpMode() {

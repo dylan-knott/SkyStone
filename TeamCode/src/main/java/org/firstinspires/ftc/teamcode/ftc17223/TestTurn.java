@@ -22,26 +22,26 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  back_distance
  **/
 
-@Autonomous(name = "TestStrafe")
-public class TestStrafe extends LinearOpMode {
+@Autonomous(name = "TestTurn")
+public class TestTurn extends LinearOpMode {
     RobotDrive robotDrive = new RobotDrive();
     VuforiaClass vuforiaClass = new VuforiaClass();
 
     public void runOpMode() throws InterruptedException {
+        telemetry.addLine("Initializing");
+        telemetry.update();
         //Initialization Code
-        robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.red);
-        vuforiaClass.InitVuforia(hardwareMap, telemetry, RobotDrive.color.red);
-
+        robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.blue);
+        vuforiaClass.InitVuforia(hardwareMap, telemetry, RobotDrive.color.blue);
+        telemetry.addLine("Robot is initialized");
+        telemetry.update();
         //Runs 1 time once start is pressed
         waitForStart();
 
 
         //Runs in a loop after start
         //while (opModeIsActive()) {
-        robotDrive.strafeEncoder(20, RobotDrive.direction.right);
-        Thread.sleep(500);
-        robotDrive.strafeEncoder(20, RobotDrive.direction.left);
-
+        robotDrive.gyroTurn(90);
         //}
 
     }

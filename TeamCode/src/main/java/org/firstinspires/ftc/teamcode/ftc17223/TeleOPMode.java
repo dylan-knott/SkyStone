@@ -20,7 +20,7 @@ public class TeleOPMode extends LinearOpMode {
             double forward = gamepad1.left_stick_y * -1; //The y direction on the gamepad is reversed idk why
             double strafe = gamepad1.left_stick_x;
             //Using a cube to add exponential growth to the control of rotation
-            double rotate = Math.pow(gamepad1.right_stick_x, 3);
+            double rotate = gamepad1.right_stick_x * robot.motorPower;
 
 
             if (gamepad1.left_bumper) robot.motorPower = 0.2;
@@ -29,11 +29,11 @@ public class TeleOPMode extends LinearOpMode {
             robot.mixDrive(forward, strafe, rotate);
 
             //Front servo control
-            if (gamepad1.right_trigger > 0.7 && !mat){
+            if (gamepad1.x && !mat){
                 if (robot.MatServos.getPosition() == 0) robot.MatServos.setPosition(90);
                 else robot.MatServos.setPosition(0);
                 mat = true;
-            } else if(gamepad1.right_trigger <= 0.7) mat = false;
+            } else if(!gamepad1.x) mat = false;
 
             //SideArm control
             if(gamepad1.right_bumper && !sideArm) {
