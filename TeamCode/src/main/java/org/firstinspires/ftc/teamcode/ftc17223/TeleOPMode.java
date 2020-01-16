@@ -30,7 +30,7 @@ public class TeleOPMode extends LinearOpMode {
 
             //Front servo control
             if (gamepad1.x && !mat){
-                if (robot.MatServos.getPosition() == 0) robot.MatServos.setPosition(90);
+                if (robot.MatServos.getPosition() == 0) robot.MatServos.setPosition((float)90 / 280);
                 else robot.MatServos.setPosition(0);
                 mat = true;
             } else if(!gamepad1.x) mat = false;
@@ -41,6 +41,8 @@ public class TeleOPMode extends LinearOpMode {
                 else robot.SideArm.setPosition(0);
                 sideArm = true;
             } else if(!gamepad1.right_bumper) sideArm = false;
+
+            if (gamepad1.y) robot.SetSideArm(70, 180);
 
 
 

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Autonomous(name = "Blue Foundation Far")
 public class BlueFoundNav extends LinearOpMode {
 
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         //Initialization code
         telemetry.addLine("Initializing");
         telemetry.update();
