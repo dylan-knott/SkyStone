@@ -26,16 +26,16 @@ public class RedStoneNavFar extends LinearOpMode {
         robotDrive.gyroTurn(-90);
         robotDrive.mixDrive(0,0,0);
         Thread.sleep(50);
-        robotDrive.mixDrive(-0.3, 0, 0);
-        while (robotDrive.dist.getDistance(DistanceUnit.INCH) > 15);
+        robotDrive.mixDrive(0.3, 0, 0);
+        while (robotDrive.dist.getDistance(DistanceUnit.INCH) < 129);
         robotDrive.mixDrive(0,0,0);
         telemetry.addLine("Searching for stone");
         telemetry.update();
         vuforiaClass.seekStone();
         Thread.sleep(100);
         robotDrive.strafeEncoder(14, RobotDrive.direction.left);
-        robotDrive.mixDrive(0.4, 0, 0);
-        //Drive forward until the blue middle line is hit
+        robotDrive.mixDrive(-0.4, 0, 0);
+        //Drive forward until the red middle line is hit
         while (robotDrive.colorSensor.red() < 190);
         //Stop the robot
         robotDrive.mixDrive(0,0,0);
