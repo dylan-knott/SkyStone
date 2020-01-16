@@ -279,8 +279,8 @@ public class RobotDrive {
        SideArm.setPosition(desiredRotation / maxRotation);
    }
    //Activates the back servos used to grab the mat, send angle of rotation in degrees as well as the max angle of the servo. Converts to a fraction usable by the servo
-   void seekMat() {
-       if (colorSensor instanceof SwitchableLight) {
+   void seekMat() throws InterruptedException {
+       if (colorSensor instanceof SwitchableLight){
            ((SwitchableLight)colorSensor).enableLight(true);
        }
 
@@ -292,9 +292,12 @@ public class RobotDrive {
            grabMat(90);
            mixDrive(-0.3, 0, 0);
            while (dist.getDistance(DistanceUnit.INCH) > 2);
+           mixDrive(0,0,0);
+           Thread.sleep(50);
            grabMat(0);
            mixDrive(0, -0.3, 0);
            while (colorSensor.red() < colorThreshold);
+           mixDrive(0,0,0);
            strafeEncoder(3, RobotDrive.direction.right);
            mixDrive(0,0,0);
        }

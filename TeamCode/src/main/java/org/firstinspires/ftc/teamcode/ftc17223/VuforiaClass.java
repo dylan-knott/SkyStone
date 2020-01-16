@@ -34,12 +34,11 @@ public class VuforiaClass {
     List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
 
     //Thresholds for triggering the dropping of the arm
-    private final double distanceThreshold = 0.25;
-    private final double strafeThreshold = 0.5;
+    private final double strafeThreshold = 0.75;
     private final int rotThreshold = 5;
 
     //Length from the block at which the robot will stop
-    private double armLength = 2.5;
+    private double armLength = 2;
 
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
     // 1) Camera Source.  Valid choices are:  BACK (behind screen) or FRONT (selfie side)
@@ -308,12 +307,12 @@ public class VuforiaClass {
 
                 //Loop until the object is within the grasp of the robot
 
-                        if (translation.get(0) > -6 * mmPerInch && Math.abs(translation.get(1)) < (strafeThreshold * mmPerInch) && Math.abs(rotation.thirdAngle) < rotThreshold) {
+                        if (translation.get(0) > -6.5 * mmPerInch && Math.abs(translation.get(1)) < (strafeThreshold * mmPerInch) && Math.abs(rotation.thirdAngle) < rotThreshold) {
                             telemetry.addLine("Reached desired place");
                             //Drop servo arm and pick up block
                             targetReached = true;
                             robotDrive.mixDrive(0, 0, 0);
-                            robotDrive.strafeEncoder(2, RobotDrive.direction.right);
+                            robotDrive.strafeEncoder(4, RobotDrive.direction.right);
                             robotDrive.SetSideArm(110, 180);
                             CameraDevice.getInstance().setFlashTorchMode(false);
                             return;
