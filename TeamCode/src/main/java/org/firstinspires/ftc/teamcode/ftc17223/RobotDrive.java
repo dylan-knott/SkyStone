@@ -292,8 +292,8 @@ public class RobotDrive {
            grabMat(90);
            mixDrive(-0.3, 0, 0);
            while (dist.getDistance(DistanceUnit.INCH) > 2);
-           mixDrive(0,0,0);
            Thread.sleep(50);
+           mixDrive(0,0,0);
            grabMat(0);
            mixDrive(0, -0.3, 0);
            while (colorSensor.red() < colorThreshold);
@@ -306,8 +306,10 @@ public class RobotDrive {
            }
            mixDrive(0, 0, 0);
            grabMat(90);
-           mixDrive(-0.7, 0, 0);
+           mixDrive(-0.3, 0, 0);
            while (dist.getDistance(DistanceUnit.INCH) > 2);
+           Thread.sleep(50);
+           mixDrive(0,0,0);
            grabMat(0);
            mixDrive(0, 0.3, 0);
            while (colorSensor.blue() < colorThreshold);

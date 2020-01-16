@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.ftc17223;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @TeleOp(name= "TeleOP")
 public class TeleOPMode extends LinearOpMode {
     RobotDrive robot = new RobotDrive();
@@ -61,6 +63,7 @@ public class TeleOPMode extends LinearOpMode {
             telemetry.addData("Red: ", robot.colorSensor.red());
             telemetry.addData("Green: ", robot.colorSensor.green());
             telemetry.addData("Blue: ", robot.colorSensor.blue());
+            telemetry.addData("Distance: ", robot.dist.getDistance(DistanceUnit.INCH));
             telemetry.update();
         }
         }
