@@ -15,13 +15,14 @@ public class RobotDrive {
     //Proportional Processing values for distance to drive
     private final double P_Forward = 0.05;
     private final double P_Strafe = 0.025;
-    private final double P_Turn = 0.01;
+    private final double P_Turn = 0.005;
 
 
     Telemetry telemetry = null;
     color teamColor = null;
     //Proportional Value used in self-correcting gyro code for encoder driving
-    private final double TURN_P = 0.02;
+    private final double TURN_P = 0.005;
+    private final double GYRO_P = 0.01;
     private final double wheelDiameter = 3.93701;
     public double colorThreshold = 200;
     final double tickThreshold = 50;
@@ -29,7 +30,7 @@ public class RobotDrive {
     //Hardware
     private DcMotorEx leftfront, leftrear, rightfront, rightrear = null;
     private BNO055IMU imu = null;
-    private DistanceSensor dist = null;
+    public DistanceSensor dist = null;
     public ColorSensor colorSensor = null;
     public Servo BlockGrips, TopServo, MatServos, SideArm = null;
     public CRServo armLift = null;
@@ -67,7 +68,7 @@ public class RobotDrive {
         rightfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftrear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightrear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-       // dist = hardwareMap.get(DistanceSensor.class, "distance");
+        dist = hardwareMap.get(DistanceSensor.class, "distance");
         BlockGrips = hardwareMap.servo.get("claw_servos");
         TopServo = hardwareMap.servo.get("top_servo");
         MatServos = hardwareMap.servo.get("mat_servos");
@@ -86,10 +87,10 @@ public class RobotDrive {
         BlockGrips.setDirection(Servo.Direction.REVERSE);
         armLift.setDirection(CRServo.Direction.REVERSE);
 
-        rightfront.setPositionPIDFCoefficients(7.5);
-        rightrear.setPositionPIDFCoefficients(7.5);
-        leftfront.setPositionPIDFCoefficients(7.5);
-        leftrear.setPositionPIDFCoefficients(7.5);
+        rightfront.setPositionPIDFCoefficients(5);
+        rightrear.setPositionPIDFCoefficients(5);
+        leftfront.setPositionPIDFCoefficients(5);
+        leftrear.setPositionPIDFCoefficients(5);
 
 
         //Initialize IMU
@@ -148,7 +149,7 @@ public class RobotDrive {
             //wait until the motors are done running
            if (Math.abs((initialHeading - getHeading()) % 360) > 1) {
                double degreesCorrect = (initialHeading - getHeading()) % 360;
-               double motorCorrect = clamp(degreesCorrect * TURN_P, -.4, .4);
+               double motorCorrect = clamp(degreesCorrect * GYRO_P, -.4, .4);
                leftfront.setPower(motorPower - motorCorrect);
                leftrear.setPower(motorPower - motorCorrect);
                rightfront.setPower(motorPower + motorCorrect);
@@ -203,18 +204,18 @@ public class RobotDrive {
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        leftfront.setPower(motorPower);
-        rightfront.setPower(-1 * motorPower);
-        leftrear.setPower(-1 * motorPower);
-        rightrear.setPower(motorPower);
+        leftfront.setPower(motorPower - 0.1);
+        rightfront.setPower(motorPower - 0.1);
+        leftrear.setPower(motorPower + 0.1);
+        rightrear.setPower(motorPower + 0.1);
 
-        while (leftfront.isBusy() || rightfront.isBusy()) {
+        while (Math.abs(leftfront.getCurrentPosition() - leftfront.getTargetPosition()) > 30) {
             //wait until the motors are done running
 
 
             if (Math.abs((initialHeading - getHeading()) % 360) > 1) {
                 double degreesCorrect = (initialHeading - getHeading()) % 360;
-                double motorCorrect = clamp(degreesCorrect * TURN_P, -.6, .6);
+                double motorCorrect = clamp(degreesCorrect * GYRO_P, -.8, .8);
                 leftfront.setPower(motorPower - motorCorrect);
                 leftrear.setPower(motorPower - motorCorrect);
                 rightfront.setPower(motorPower + motorCorrect);
@@ -292,7 +293,7 @@ public class RobotDrive {
            mixDrive(-0.3, 0, 0);
            while (dist.getDistance(DistanceUnit.INCH) > 2);
            grabMat(0);
-           mixDrive(0, -motorPower, 0);
+           mixDrive(0, -0.3, 0);
            while (colorSensor.red() < colorThreshold);
            strafeEncoder(3, RobotDrive.direction.right);
            mixDrive(0,0,0);
@@ -305,7 +306,7 @@ public class RobotDrive {
            mixDrive(-0.7, 0, 0);
            while (dist.getDistance(DistanceUnit.INCH) > 2);
            grabMat(0);
-           mixDrive(0, motorPower, 0);
+           mixDrive(0, 0.3, 0);
            while (colorSensor.blue() < colorThreshold);
            strafeEncoder(3, RobotDrive.direction.right);
 

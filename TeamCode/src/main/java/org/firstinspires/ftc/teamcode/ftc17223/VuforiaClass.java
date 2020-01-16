@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.ftc17223;
 
 
 import android.graphics.Camera;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.vuforia.CameraDevice;
+
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -32,11 +35,11 @@ public class VuforiaClass {
 
     //Thresholds for triggering the dropping of the arm
     private final double distanceThreshold = 0.25;
-    private final double strafeThreshold = 0.75;
+    private final double strafeThreshold = 0.5;
     private final int rotThreshold = 5;
 
     //Length from the block at which the robot will stop
-    private int armLength = 3;
+    private double armLength = 2.5;
 
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
     // 1) Camera Source.  Valid choices are:  BACK (behind screen) or FRONT (selfie side)
@@ -249,7 +252,7 @@ public class VuforiaClass {
         // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
         final float CAMERA_FORWARD_DISPLACEMENT  = 0 * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
         final float CAMERA_VERTICAL_DISPLACEMENT = 0 * mmPerInch;   // eg: Camera is 8 Inches above ground
-        final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
+        final float CAMERA_LEFT_DISPLACEMENT     = -1;     // eg: Camera is ON the robot's center line
 
         OpenGLMatrix robotFromCamera = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
@@ -265,6 +268,7 @@ public class VuforiaClass {
     }
 
     public void seekStone() {
+        CameraDevice.getInstance().setFlashTorchMode(true);
         boolean targetReached = false;
         boolean speedSet = false;
         foundOnce = false;
@@ -304,12 +308,14 @@ public class VuforiaClass {
 
                 //Loop until the object is within the grasp of the robot
 
-                        if (translation.get(0) > -6.5 * mmPerInch && Math.abs(translation.get(1)) < (strafeThreshold * mmPerInch) && Math.abs(rotation.thirdAngle) < rotThreshold) {
+                        if (translation.get(0) > -6 * mmPerInch && Math.abs(translation.get(1)) < (strafeThreshold * mmPerInch) && Math.abs(rotation.thirdAngle) < rotThreshold) {
                             telemetry.addLine("Reached desired place");
                             //Drop servo arm and pick up block
                             targetReached = true;
                             robotDrive.mixDrive(0, 0, 0);
+                            robotDrive.strafeEncoder(2, RobotDrive.direction.right);
                             robotDrive.SetSideArm(110, 180);
+                            CameraDevice.getInstance().setFlashTorchMode(false);
                             return;
                         } else {
 

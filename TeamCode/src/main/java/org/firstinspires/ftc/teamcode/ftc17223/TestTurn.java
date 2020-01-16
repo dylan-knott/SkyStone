@@ -39,10 +39,7 @@ public class TestTurn extends LinearOpMode {
         waitForStart();
 
 
-        //Runs in a loop after start
-        //while (opModeIsActive()) {
-        robotDrive.gyroTurn(90);
-        //}
+        vuforiaClass.seekStone();
 
     }
 

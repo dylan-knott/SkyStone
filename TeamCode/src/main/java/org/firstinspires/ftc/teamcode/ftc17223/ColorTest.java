@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.ftc17223;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 /**-----------Hardware Map-------------
  Motors:
  back_right_motor
@@ -29,19 +31,19 @@ public class ColorTest extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
         //Initialization Code
-        robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.blue);
-        vuforiaClass.InitVuforia(hardwareMap, telemetry, RobotDrive.color.blue);
+        robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.red);
+        vuforiaClass.InitVuforia(hardwareMap, telemetry, RobotDrive.color.red);
 
         //Runs 1 time once start is pressed
         waitForStart();
 
+        while (opModeIsActive()) {
+            if (robotDrive.colorSensor.red() > robotDrive.colorThreshold) robotDrive.grabMat(90);
+            else robotDrive.grabMat(0);
 
-        //Runs in a loop after start
-        //while (opModeIsActive()) {
-        robotDrive.seekMat();
-
-        //}
+            telemetry.addData("Distance: ", robotDrive.dist.getDistance(DistanceUnit.INCH));
+            telemetry.update();
+        }
 
     }
-
 }
