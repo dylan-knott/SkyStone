@@ -43,6 +43,5 @@ public class BlueStoneNavFar extends LinearOpMode {
         robotDrive.driveEncoder(11);
         robotDrive.SetSideArm(70, 180);
         robotDrive.driveEncoder(-7);
-
     }
 }
