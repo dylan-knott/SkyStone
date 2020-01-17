@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ftc17223;
 import android.text.format.Time;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**-----------Hardware Map-------------
