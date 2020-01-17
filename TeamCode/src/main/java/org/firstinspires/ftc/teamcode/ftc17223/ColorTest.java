@@ -38,7 +38,7 @@ public class ColorTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            if (robotDrive.colorSensor.red() > robotDrive.colorThreshold) robotDrive.grabMat(90);
+            if (robotDrive.colorSensor.red() > robotDrive.foundThreshold) robotDrive.grabMat(90);
             else robotDrive.grabMat(0);
 
             telemetry.addData("Distance: ", robotDrive.dist.getDistance(DistanceUnit.INCH));

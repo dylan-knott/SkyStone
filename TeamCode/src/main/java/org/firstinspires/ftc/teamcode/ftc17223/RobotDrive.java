@@ -24,7 +24,8 @@ public class RobotDrive {
     private final double TURN_P = 0.005;
     private final double GYRO_P = 0.01;
     private final double wheelDiameter = 3.93701;
-    public double colorThreshold = 200;
+    public double foundThreshold = 200;
+    public double floorThreshold = 220;
     final double tickThreshold = 50;
 
     //Hardware
@@ -286,35 +287,42 @@ public class RobotDrive {
 
        mixDrive(0.2, 0, 0);
        if (teamColor == color.red) {
-           while (colorSensor.red() < colorThreshold){
+           while (colorSensor.red() < foundThreshold){
            }
            mixDrive(0, 0, 0);
            grabMat(90);
-           mixDrive(-0.3, 0, 0);
-           while (dist.getDistance(DistanceUnit.INCH) > 2);
-           Thread.sleep(50);
+           Thread.sleep(500);
+           mixDrive(-0.4, 0, 0);
+           while (dist.getDistance(DistanceUnit.INCH) > 4);
            mixDrive(0,0,0);
            grabMat(0);
+           Thread.sleep(50);
            mixDrive(0, -0.3, 0);
-           while (colorSensor.red() < colorThreshold);
+           SetSideArm(70,180);
+           while (colorSensor.red() < floorThreshold);
            mixDrive(0,0,0);
+           Thread.sleep(20);
            strafeEncoder(3, RobotDrive.direction.right);
            mixDrive(0,0,0);
        }
        else {
-           while (colorSensor.blue() < colorThreshold) {
+           while (colorSensor.blue() < foundThreshold) {
            }
            mixDrive(0, 0, 0);
            grabMat(90);
-           mixDrive(-0.3, 0, 0);
-           while (dist.getDistance(DistanceUnit.INCH) > 2);
-           Thread.sleep(50);
+           Thread.sleep(500);
+           mixDrive(-0.4, 0, 0);
+           while (dist.getDistance(DistanceUnit.INCH) > 4);
            mixDrive(0,0,0);
            grabMat(0);
+           Thread.sleep(50);
            mixDrive(0, 0.3, 0);
-           while (colorSensor.blue() < colorThreshold);
+            SetSideArm(70,180);
+           while (colorSensor.blue() < floorThreshold);
+           mixDrive(0,0,0);
+           Thread.sleep(20);
            strafeEncoder(3, RobotDrive.direction.right);
-
+           mixDrive(0,0,0);
        }
 
        if (colorSensor instanceof SwitchableLight) {

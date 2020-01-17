@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.ftc17223;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "Blue Foundation Near")
-public class BlueFoundNav extends LinearOpMode {
+@Autonomous(name = "Blue Foundation Far")
+@Disabled
+public class BlueFoundNavFar extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
         //Initialization code

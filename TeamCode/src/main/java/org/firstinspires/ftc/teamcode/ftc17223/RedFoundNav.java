@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.ftc17223;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "Red Foundation Far")
+@Autonomous(name = "Red Foundation Near")
 public class RedFoundNav extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
@@ -19,7 +19,11 @@ public class RedFoundNav extends LinearOpMode {
         //Code to run once once start button is pressed
 
         robotDrive.driveEncoder(25);
-        robotDrive.strafeEncoder(7, RobotDrive.direction.right);
+        Thread.sleep(50);
+        robotDrive.mixDrive(0, 0.3, 0);
+        Thread.sleep(900);
+        robotDrive.mixDrive(0,0,0);
+        Thread.sleep(50);
         robotDrive.seekMat();
     }
 }

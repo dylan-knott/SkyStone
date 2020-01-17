@@ -17,10 +17,10 @@ public class BlueStoneNavFar extends LinearOpMode {
         VuforiaClass vuforiaClass = new VuforiaClass();
         robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.blue);
         vuforiaClass.InitVuforia(hardwareMap, telemetry, RobotDrive.color.blue);
-        waitForStart();
         telemetry.addLine("Robot Initialized");
         telemetry.update();
         //Code to run once once start button is pressed
+        waitForStart();
 
         robotDrive.driveEncoder(23);
         robotDrive.gyroTurn(-90);
@@ -39,9 +39,12 @@ public class BlueStoneNavFar extends LinearOpMode {
         while (robotDrive.colorSensor.blue() < 220);
         //Stop the robot
         robotDrive.mixDrive(0,0,0);
-        //Drive an additional 11 inches before dropping the stone and returning to center
+        //Drive an additional 15 inches before dropping the stone and returning to center
         robotDrive.driveEncoder(15);
-        robotDrive.SetSideArm(90, 180);
+        robotDrive.SetSideArm(80, 180);
         robotDrive.driveEncoder(-7);
+        robotDrive.mixDrive(0, 0.2, 0);
+        Thread.sleep(100);
+        robotDrive.mixDrive(0,0,0);
     }
 }

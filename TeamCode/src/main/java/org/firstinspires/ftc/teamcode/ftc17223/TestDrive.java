@@ -25,6 +25,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  **/
 
 @Autonomous(name = "TestDrive")
+@Disabled
 public class TestDrive extends LinearOpMode {
     RobotDrive robotDrive = new RobotDrive();
     VuforiaClass vuforiaClass = new VuforiaClass();

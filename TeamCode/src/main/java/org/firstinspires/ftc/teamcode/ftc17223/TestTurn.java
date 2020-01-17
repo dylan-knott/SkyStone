@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ftc17223;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**-----------Hardware Map-------------
@@ -23,6 +24,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  **/
 
 @Autonomous(name = "TestTurn")
+@Disabled
 public class TestTurn extends LinearOpMode {
     RobotDrive robotDrive = new RobotDrive();
     VuforiaClass vuforiaClass = new VuforiaClass();

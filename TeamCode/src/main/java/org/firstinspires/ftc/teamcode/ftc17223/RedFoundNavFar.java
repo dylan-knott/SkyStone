@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.ftc17223;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "Blue Foundation Near")
-public class BlueFoundNav extends LinearOpMode {
+@Autonomous(name = "Red Foundation Far")
+@Disabled
+public class RedFoundNavFar extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
         //Initialization code
         telemetry.addLine("Initializing");
         telemetry.update();
         RobotDrive robotDrive = new RobotDrive();
-        robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.blue);
+        robotDrive.initializeRobot(hardwareMap, telemetry, RobotDrive.color.red);
         telemetry.addLine("Robot Initialized");
         telemetry.update();
 
@@ -20,7 +22,7 @@ public class BlueFoundNav extends LinearOpMode {
 
         robotDrive.driveEncoder(25);
         Thread.sleep(50);
-        robotDrive.mixDrive(0, -0.3, 0);
+        robotDrive.mixDrive(0, 0.3, 0);
         Thread.sleep(900);
         robotDrive.mixDrive(0,0,0);
         Thread.sleep(50);

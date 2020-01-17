@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "Red Nav Near")
+@Autonomous(name = "Red Park Near")
 public class RedNavNear extends LinearOpMode {
 
     public void runOpMode() {
