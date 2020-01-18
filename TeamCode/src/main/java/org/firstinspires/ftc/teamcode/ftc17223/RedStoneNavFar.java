@@ -34,14 +34,16 @@ public class RedStoneNavFar extends LinearOpMode {
         Thread.sleep(100);
         robotDrive.strafeEncoder(14, RobotDrive.direction.left);
         robotDrive.gyroTurn(180);
+        robotDrive.mixDrive(0,0,0);
+        Thread.sleep(50);
         robotDrive.mixDrive(0.4, 0, 0);
         //Drive forward until the blue middle line is hit
-        while (robotDrive.colorSensor.red() < robotDrive.floorThreshold);
+        while (robotDrive.colorSensor.red() < 240);
         //Stop the robot
         robotDrive.mixDrive(0,0,0);
         //Drive an additional 15 inches before dropping the stone and returning to center
-        robotDrive.driveEncoder(15);
+        robotDrive.driveEncoder(18);
         robotDrive.SetSideArm(80, 180);
-        robotDrive.driveEncoder(-7);
+        robotDrive.driveEncoder(-12);
     }
 }

@@ -22,7 +22,7 @@ public class BlueStoneNavFar extends LinearOpMode {
         //Code to run once once start button is pressed
         waitForStart();
 
-        robotDrive.driveEncoder(23);
+        robotDrive.driveEncoder(21);
         robotDrive.gyroTurn(-90);
         robotDrive.mixDrive(0,0,0);
         Thread.sleep(50);
@@ -40,9 +40,9 @@ public class BlueStoneNavFar extends LinearOpMode {
         //Stop the robot
         robotDrive.mixDrive(0,0,0);
         //Drive an additional 15 inches before dropping the stone and returning to center
-        robotDrive.driveEncoder(15);
+        robotDrive.driveEncoder(18);
         robotDrive.SetSideArm(80, 180);
-        robotDrive.driveEncoder(-7);
+        robotDrive.driveEncoder(-12);
         robotDrive.mixDrive(0, 0.2, 0);
         Thread.sleep(100);
         robotDrive.mixDrive(0,0,0);

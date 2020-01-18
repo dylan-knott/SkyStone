@@ -26,6 +26,7 @@ public class TeleOPMode extends LinearOpMode {
 
 
             if (gamepad1.left_bumper) robot.motorPower = 0.2;
+            else if (gamepad1.right_bumper) robot.motorPower= 0.1;
             else robot.motorPower = 0.5;
             //Wheel control
             robot.mixDrive(forward, strafe, rotate);
@@ -38,11 +39,11 @@ public class TeleOPMode extends LinearOpMode {
             } else if(!gamepad1.x) mat = false;
 
             //SideArm control
-            if(gamepad1.right_bumper && !sideArm) {
+            if(gamepad1.b && !sideArm) {
                 if(robot.SideArm.getPosition() == 0) robot.SideArm.setPosition((float) 110 / 180);
                 else robot.SideArm.setPosition(0);
                 sideArm = true;
-            } else if(!gamepad1.right_bumper) sideArm = false;
+            } else if(!gamepad1.b) sideArm = false;
 
             if (gamepad1.y) robot.SetSideArm(70, 180);
 

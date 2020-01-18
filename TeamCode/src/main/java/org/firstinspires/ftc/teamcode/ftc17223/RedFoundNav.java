@@ -21,7 +21,7 @@ public class RedFoundNav extends LinearOpMode {
         robotDrive.driveEncoder(25);
         Thread.sleep(50);
         robotDrive.mixDrive(0, 0.3, 0);
-        Thread.sleep(900);
+        Thread.sleep(800);
         robotDrive.mixDrive(0,0,0);
         Thread.sleep(50);
         robotDrive.seekMat();

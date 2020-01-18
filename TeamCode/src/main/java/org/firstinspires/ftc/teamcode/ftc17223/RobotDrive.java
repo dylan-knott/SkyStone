@@ -24,7 +24,7 @@ public class RobotDrive {
     private final double TURN_P = 0.005;
     private final double GYRO_P = 0.01;
     private final double wheelDiameter = 3.93701;
-    public double foundThreshold = 200;
+    public double foundThreshold = 215;
     public double floorThreshold = 220;
     final double tickThreshold = 50;
 
@@ -287,22 +287,23 @@ public class RobotDrive {
 
        mixDrive(0.2, 0, 0);
        if (teamColor == color.red) {
-           while (colorSensor.red() < foundThreshold){
+           while (colorSensor.red() < 250){
            }
            mixDrive(0, 0, 0);
            grabMat(90);
            Thread.sleep(500);
            mixDrive(-0.4, 0, 0);
-           while (dist.getDistance(DistanceUnit.INCH) > 4);
+           while (dist.getDistance(DistanceUnit.INCH) > 5);
            mixDrive(0,0,0);
            grabMat(0);
            Thread.sleep(50);
-           mixDrive(0, -0.3, 0);
+           mixDrive(0, -0.4, 0);
            SetSideArm(70,180);
+           Thread.sleep(500);
            while (colorSensor.red() < floorThreshold);
            mixDrive(0,0,0);
            Thread.sleep(20);
-           strafeEncoder(3, RobotDrive.direction.right);
+           strafeEncoder(5, RobotDrive.direction.right);
            mixDrive(0,0,0);
        }
        else {
@@ -316,8 +317,9 @@ public class RobotDrive {
            mixDrive(0,0,0);
            grabMat(0);
            Thread.sleep(50);
-           mixDrive(0, 0.3, 0);
-            SetSideArm(70,180);
+           mixDrive(0, 0.4, 0);
+           SetSideArm(70,180);
+           Thread.sleep(500);
            while (colorSensor.blue() < floorThreshold);
            mixDrive(0,0,0);
            Thread.sleep(20);
