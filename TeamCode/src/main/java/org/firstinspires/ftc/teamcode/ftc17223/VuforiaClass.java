@@ -35,7 +35,7 @@ public class VuforiaClass {
 
     //Thresholds for triggering the dropping of the arm
     private final double strafeThreshold = 0.75;
-    private final int rotThreshold = 5;
+    private final int rotThreshold = 10;
 
     //Length from the block at which the robot will stop
     private double armLength = 2;

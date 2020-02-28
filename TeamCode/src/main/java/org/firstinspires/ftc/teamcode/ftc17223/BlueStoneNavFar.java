@@ -34,17 +34,18 @@ public class BlueStoneNavFar extends LinearOpMode {
         vuforiaClass.seekStone();
         Thread.sleep(100);
         robotDrive.strafeEncoder(14, RobotDrive.direction.left);
-        robotDrive.mixDrive(0.4, 0, 0);
+        robotDrive.mixDrive(0.3, 0, 0);
         //Drive forward until the blue middle line is hit
-        while (robotDrive.colorSensor.blue() < 220);
+        while (robotDrive.colorSensor.blue() < 188);
         //Stop the robot
         robotDrive.mixDrive(0,0,0);
         //Drive an additional 15 inches before dropping the stone and returning to center
-        robotDrive.driveEncoder(18);
+        robotDrive.driveEncoder(23);
         robotDrive.SetSideArm(80, 180);
-        robotDrive.driveEncoder(-12);
-        robotDrive.mixDrive(0, 0.2, 0);
-        Thread.sleep(100);
+        robotDrive.driveEncoder(-17);
+        robotDrive.SetSideArm(0, 180);
+        robotDrive.mixDrive(0, 0.3, 0);
+        Thread.sleep(600);
         robotDrive.mixDrive(0,0,0);
     }
 }

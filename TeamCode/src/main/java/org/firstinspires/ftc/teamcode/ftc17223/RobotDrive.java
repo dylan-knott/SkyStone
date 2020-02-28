@@ -25,7 +25,7 @@ public class RobotDrive {
     private final double GYRO_P = 0.01;
     private final double wheelDiameter = 3.93701;
     public double foundThreshold = 215;
-    public double floorThreshold = 220;
+    public double floorThreshold = 200;
     final double tickThreshold = 50;
 
     //Hardware
@@ -267,6 +267,33 @@ public class RobotDrive {
         rightrear.setPower(0);
     }
 
+    void gyroTurn(double degrees, double motorClamp) {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double target_angle = getHeading() - degrees;
+        if (degrees < 0) {target_angle += turningBuffer;} else if (degrees > 0) {target_angle -= turningBuffer;}
+        while (Math.abs((target_angle - getHeading()) % 360) > 3) {
+            double error_degrees = (target_angle - getHeading()) % 360; //Compute turning error
+            double motor_output = clamp(error_degrees * TURN_P, -motorClamp, motorClamp); // Get Correction of error
+            //Send corresponding value to motors
+            leftfront.setPower(-1 * motor_output);
+            leftrear.setPower(-1 * motor_output);
+            rightfront.setPower(motor_output);
+            rightrear.setPower(motor_output);
+
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            telemetry.addData("Target Angle : ", target_angle - turningBuffer);
+            telemetry.addData("Current Heading : ", String.format(Locale.getDefault(), "%.1f", angles.firstAngle * -1));
+            telemetry.update();
+        }
+
+        telemetry.addData("Error Degrees: ", Math.abs(target_angle - angles.firstAngle) % 360);
+        telemetry.update();
+        leftfront.setPower(0);
+        rightfront.setPower(0);
+        leftrear.setPower(0);
+        rightrear.setPower(0);
+    }
+
     //Returns the current heading of the robot when it is called, takes reading from the IMU gyroscope
     float getHeading() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
@@ -287,7 +314,7 @@ public class RobotDrive {
 
        mixDrive(0.2, 0, 0);
        if (teamColor == color.red) {
-           while (colorSensor.red() < 250){
+           while (colorSensor.red() < 230){
            }
            mixDrive(0, 0, 0);
            grabMat(90);
@@ -297,17 +324,17 @@ public class RobotDrive {
            mixDrive(0,0,0);
            grabMat(0);
            Thread.sleep(50);
-           mixDrive(0, -0.4, 0);
+           mixDrive(0, -0.3, 0);
            SetSideArm(70,180);
-           Thread.sleep(500);
-           while (colorSensor.red() < floorThreshold);
+           Thread.sleep(1000);
+           while (colorSensor.red() < 188);
            mixDrive(0,0,0);
            Thread.sleep(20);
            strafeEncoder(5, RobotDrive.direction.right);
            mixDrive(0,0,0);
        }
        else {
-           while (colorSensor.blue() < foundThreshold) {
+           while (colorSensor.blue() < 205) {
            }
            mixDrive(0, 0, 0);
            grabMat(90);
@@ -317,10 +344,10 @@ public class RobotDrive {
            mixDrive(0,0,0);
            grabMat(0);
            Thread.sleep(50);
-           mixDrive(0, 0.4, 0);
+           mixDrive(0, 0.3, 0);
            SetSideArm(70,180);
            Thread.sleep(500);
-           while (colorSensor.blue() < floorThreshold);
+           while (colorSensor.blue() < 190);
            mixDrive(0,0,0);
            Thread.sleep(20);
            strafeEncoder(3, RobotDrive.direction.right);

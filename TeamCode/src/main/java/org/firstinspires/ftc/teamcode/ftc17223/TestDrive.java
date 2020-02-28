@@ -26,7 +26,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  **/
 
 @Autonomous(name = "TestDrive")
-@Disabled
 public class TestDrive extends LinearOpMode {
     RobotDrive robotDrive = new RobotDrive();
     VuforiaClass vuforiaClass = new VuforiaClass();
@@ -45,7 +44,17 @@ public class TestDrive extends LinearOpMode {
 
         //Runs in a loop after start
         //while (opModeIsActive()) {
-        robotDrive.driveEncoder(10);
+        vuforiaClass.seekStone();
+        Thread.sleep(100);
+        robotDrive.strafeEncoder(14, RobotDrive.direction.left);
+        robotDrive.mixDrive(0,0,0);
+        robotDrive.driveEncoder(15);
+        robotDrive.SetSideArm(0, 180);
+        robotDrive.mixDrive(0,0.3,0);
+        Thread.sleep(100);
+        robotDrive.mixDrive(0,0,0);
+        Thread.sleep(50);
+        robotDrive.driveEncoder(-25);
         //}
 
     }

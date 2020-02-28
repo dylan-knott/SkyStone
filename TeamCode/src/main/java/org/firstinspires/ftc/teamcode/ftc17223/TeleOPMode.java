@@ -26,8 +26,8 @@ public class TeleOPMode extends LinearOpMode {
 
 
             if (gamepad1.left_bumper) robot.motorPower = 0.2;
-            else if (gamepad1.right_bumper) robot.motorPower= 0.1;
-            else robot.motorPower = 0.5;
+            else if (gamepad1.right_bumper) robot.motorPower= 0.15;
+            else robot.motorPower = 0.65;
             //Wheel control
             robot.mixDrive(forward, strafe, rotate);
 

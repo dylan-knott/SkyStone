@@ -21,7 +21,7 @@ public class BlueFoundNav extends LinearOpMode {
         robotDrive.driveEncoder(25);
         Thread.sleep(50);
         robotDrive.mixDrive(0, -0.3, 0);
-        Thread.sleep(1050);
+        Thread.sleep(1000);
         robotDrive.mixDrive(0,0,0);
         Thread.sleep(50);
         robotDrive.seekMat();
